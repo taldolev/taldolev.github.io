@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Injection Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Tailwind-inspired utility classes */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .min-h-screen { min-height: 100vh; }
+        .p-24 { padding: 6rem; }
+        .relative { position: relative; }
+        .overflow-hidden { overflow: hidden; }
+        .z-10 { z-index: 10; }
+        .w-full { width: 100%; }
+        .max-w-md { max-width: 28rem; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .font-bold { font-weight: 700; }
+        .mb-8 { margin-bottom: 2rem; }
+        .text-center { text-align: center; }
+        .cyber-font { font-family: "Orbitron", sans-serif; }
+        .text-green-400 { color: #34d399; }
+        .space-y-4 > * + * { margin-top: 1rem; }
+        .space-y-2 > * + * { margin-top: 0.5rem; }
+        .glow-effect {
+            animation: subtle-glow 2s ease-in-out infinite alternate;
+        }
+        .bg-gray-800 { background-color: #1f2937; }
+        .border-green-500 { border-color: #10b981; }
+        .w-full { width: 100%; }
+        .bg-green-600 { background-color: #059669; }
+        .hover\:bg-green-700:hover { background-color: #047857; }
+        .text-white { color: white; }
+        .mt-4 { margin-top: 1rem; }
+        .p-4 { padding: 1rem; }
+        .rounded-md { border-radius: 0.375rem; }
+        .overflow-x-auto { overflow-x: auto; }
+        .list-disc { list-style-type: disc; }
+        .list-inside { list-style-position: inside; }
+        .space-y-1 > * + * { margin-top: 0.25rem; }
+        .bg-red-900\/20 { background-color: rgba(127, 29, 29, 0.2); }
+        .border-red-500 { border-color: #ef4444; }
+        .gap-2 { gap: 0.5rem; }
+        .text-red-400 { color: #f87171; }
+        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
+        .fixed { position: fixed; }
+        .bottom-0 { bottom: 0; }
+        .left-0 { left: 0; }
+        .right-0 { right: 0; }
+        .bg-gray-800 { background-color: #1f2937; }
+        .mr-2 { margin-right: 0.5rem; }
+        .top-0 { top: 0; }
+        .h-12 { height: 3rem; }
+        .w-auto { width: auto; }
+
+        @keyframes subtle-glow {
+            0% { box-shadow: 0 0 2px #0f0, 0 0 4px #0f0; }
+            100% { box-shadow: 0 0 3px #0f0, 0 0 6px #0f0; }
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #000;
+            color: #34d399;
+        }
+
+        input, button {
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #10b981;
+            background-color: #1f2937;
+            color: #34d399;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border: none;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <main class="flex min-h-screen flex-col items-center justify-center p-24 relative overflow-hidden">
+        <canvas id="matrixCanvas" class="fixed top-0 left-0 w-full h-full" style="z-index: -1;"></canvas>
+        <div class="fixed top-0 left-0 right-0 bg-gray-800 text-green-400 p-4 flex items-center justify-between">
+            <img src="https://www.openu.ac.il/_layouts/15/OpenU_WWW/Theming/Global/images/LOGO_OU_WHITE.svg?v=6" height="50" width="150" alt="Open University Logo">
+            <h1 class="text-2xl font-bold cyber-font" dir="rtl">
+                קורס 10878: ניתוח נתוני עתק ואבטחת סייבר
+            </h1>
+        </div>
+        <div class="z-10 w-full max-w-md">
+            <h2 class="text-3xl font-bold mb-8 text-center cyber-font text-green-400">SQL Injection Simulator</h2>
+            <div id="sqlInjectionSimulator" class="space-y-4" dir="rtl"></div>
+        </div>
+        <div class="fixed bottom-0 left-0 right-0 bg-gray-800 text-green-400 p-2 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-red-400">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+            <span class="text-red-400">This is an educational simulation. Do not use on real systems.</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span>Practice ethical hacking responsibly</span>
+        </div>
+    </main>
+
+    <script>
+        // Matrix Background
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = String.fromCharCode(Math.random() * 128);
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+
+        // SQL Injection Simulator
+        const users = [
+            { id: 1, username: "admin", password: "secretpass123" },
+            { id: 2, username: "john", password: "password123" },
+            { id: 3, username: "jane", password: "qwerty456" },
+        ];
+
+        function SQLInjectionSimulator() {
+            let username = "";
+            let password = "";
+            let queryResult = "";
+            let loginResult = "";
+            let injectionExplanation = "";
+
+            function simulateLogin() {
+                const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+                queryResult = query;
+
+                let loginSuccessful = false;
+                let explanation = "";
+
+                if (username.includes("'")) {
+                    loginSuccessful = true;
+                    explanation = explainInjection(username);
+                } else if (password.includes("'")) {
+                    loginSuccessful = true;
+                    explanation = explainInjection(password);
+                } else {
+                    loginSuccessful = users.some((user) => user.username === username && user.password === password);
+                }
+
+                loginResult = loginSuccessful ? "התחברות הצליחה!" : "התחברות נכשלה.";
+                injectionExplanation = explanation;
+
+                render();
+            }
+
+            function explainInjection(input) {
+                if (input.includes("' OR '1'='1")) {
+                    return "הזרקה זו יוצרת תנאי שתמיד נכון (1=1), ובכך עוקפת את בדיקת הסיסמה. השאילתה המתוקנת כעת מחזירה את כל המשתמשים, ומאפשרת גישה.";
+                } else if (input.includes("' --")) {
+                    return "הזרקה זו משתמשת בהערות SQL (--) כדי להתעלם משאר השאילתה, כולל בדיקת הסיסמה. זה מאפשר התחברות ללא סיסמה תקפה.";
+                } else if (input.includes("' OR '")) {
+                    return "הזרקה זו מוסיפה תנאי OR שסביר להניח שיהיה נכון, ובכך עוקפת את לוגיקת האימות המיועדת.";
+                } else {
+                    return "קלט זה מכיל גרש בודד, שיכול לשבור את מבנה שאילתת ה-SQL ולהוביל לגישה לא מורשית.";
+                }
+            }
+
+            function render() {
+                const container = document.getElementById('sqlInjectionSimulator');
+                container.innerHTML = `
+                    <div class="space-y-2">
+                        <label class="text-green-400 text-sm">שם משתמש:</label>
+                        <input type="text" value="${username}" onchange="this.setAttribute('value', this.value)" class="glow-effect bg-gray-800 text-green-400 border-green-500" placeholder="הכנס שם משתמש">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-green-400 text-sm">סיסמה:</label>
+                        <input type="text" value="${password}" onchange="this.setAttribute('value', this.value)" class="glow-effect bg-gray-800 text-green-400 border-green-500" placeholder="הכנס סיסמה">
+                    </div>
+                    <button onclick="simulateLogin()" class="w-full bg-green-600 hover:bg-green-700 text-white">התחבר</button>
+                    <div class="mt-4">
+                        <h3 class="text-green-400 font-bold mb-2">שאילתת SQL מדומה:</h3>
+                        <pre class="bg-gray-800 p-4 rounded-md text-green-400 overflow-x-auto" dir="ltr">${queryResult}</pre>
+                        ${injectionExplanation ? `
+                            <div class="mt-2 p-2 bg-yellow-900/20 border border-yellow-500 rounded-md">
+                                <p class="text-yellow-400 text-sm">${injectionExplanation}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-green-400 font-bold mb-2">תוצאת התחברות:</h3>
+                        <pre class="bg-gray-800 p-4 rounded-md text-green-400 overflow-x-auto">${loginResult}</pre>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-green-400 font-bold mb-2">דוגמאות להזרקת SQL:</h3>
+                        <ul class="list-disc list-inside text-green-400 space-y-1">
+                            <li>שם משתמש: admin' --</li>
+                            <li>שם משתמש: admin' OR '1'='1</li>
+                            <li>שם משתמש: ' OR '1'='1</li>
+                            <li>סיסמה: ' OR '1'='1</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 p-4 bg-red-900/20 rounded-md border border-red-500">
+                        <div class="flex items-center gap-2 mb-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-400">
+                                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                                <line x1="12" y1="9" x2="12" y2="13"></line>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            <h3 class="text-red-400 font-bold">למטרות לימודיות בלבד</h3>
+                        </div>
+                        <p class="text-red-400 text-sm">
+                            סימולציה זו מדגימה פגיעויות של הזרקת SQL. לעולם אל תנסו טכניקות אלה במערכות אמיתיות ללא אישור מפורש. תמיד
+                            השתמשו בשאילתות מפורמטות ובתיקוף קלט נאות ביישומים אמיתיים.
+                        </p>
+                    </div>
+                `;
+            }
+
+            render();
+
+            return {
+                simulateLogin: () => {
+                    username = document.querySelector('input[placeholder="הכנס שם משתמש"]').value;
+                    password = document.querySelector('input[placeholder="הכנס סיסמה"]').value;
+                    simulateLogin();
+                }
+            };
+        }
+
+        const simulator = SQLInjectionSimulator();
+        window.simulateLogin = simulator.simulateLogin;
+    </script>
+</body>
+</html>
+
