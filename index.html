@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10878 - Big Data & Cyber Security</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        :root {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --card: 222.2 84% 4.9%;
+            --card-foreground: 210 40% 98%;
+            --popover: 222.2 84% 4.9%;
+            --popover-foreground: 210 40% 98%;
+            --primary: 210 40% 98%;
+            --primary-foreground: 222.2 47.4% 11.2%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+            --input: 217.2 32.6% 17.5%;
+            --ring: 212.7 26.8% 83.9%;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            margin: 0;
+            padding: 0;
+        }
+
+        .cyber-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        [dir="rtl"] {
+            text-align: right;
+        }
+
+        .text-green-500 { color: #10b981; }
+        .text-red-500 { color: #ef4444; }
+        .text-green-400 { color: #34d399; }
+        .text-red-400 { color: #f87171; }
+
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 #00fffc, -0.05em -0.025em 0 #fc00ff, 0.025em 0.05em 0 #fffc00; }
+            14% { text-shadow: 0.05em 0 0 #00fffc, -0.05em -0.025em 0 #fc00ff, 0.025em 0.05em 0 #fffc00; }
+            15% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.025em 0 #fc00ff, -0.05em -0.05em 0 #fffc00; }
+            49% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.025em 0 #fc00ff, -0.05em -0.05em 0 #fffc00; }
+            50% { text-shadow: 0.025em 0.05em 0 #00fffc, 0.05em 0 0 #fc00ff, 0 -0.05em 0 #fffc00; }
+            99% { text-shadow: 0.025em 0.05em 0 #00fffc, 0.05em 0 0 #fc00ff, 0 -0.05em 0 #fffc00; }
+            100% { text-shadow: -0.025em 0 0 #00fffc, -0.025em -0.025em 0 #fc00ff, -0.025em -0.05em 0 #fffc00; }
+        }
+
+        .cyber-font span {
+            animation: glitch 500ms infinite;
+            animation-play-state: paused;
+            animation-delay: calc(var(--anim, 0) * -1s);
+            display: inline-block;
+        }
+
+        .cyber-font:hover span {
+            animation-play-state: running;
+        }
+
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .min-h-screen { min-height: 100vh; }
+        .p-24 { padding: 6rem; }
+        .p-4 { padding: 1rem; }
+        .p-2 { padding: 0.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .w-full { width: 100%; }
+        .max-w-4xl { max-width: 56rem; }
+        .text-6xl { font-size: 3.75rem; line-height: 1; }
+        .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
+        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
+        .font-bold { font-weight: 700; }
+        .text-center { text-align: center; }
+        .relative { position: relative; }
+        .fixed { position: fixed; }
+        .top-0 { top: 0; }
+        .left-0 { left: 0; }
+        .right-0 { right: 0; }
+        .bottom-0 { bottom: 0; }
+        .z-10 { z-index: 10; }
+        .-z-10 { z-index: -10; }
+        .overflow-hidden { overflow: hidden; }
+
+        .bg-gray-800 { background-color: #1f2937; }
+        .cursor-pointer { cursor: pointer; }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+        }
+
+        input {
+            background-color: #1f2937;
+            color: #34d399;
+            border: 1px solid #10b981;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        progress {
+            width: 100%;
+            height: 0.5rem;
+            border-radius: 0.25rem;
+            background-color: #1f2937;
+        }
+
+        progress::-webkit-progress-bar {
+            background-color: #1f2937;
+            border-radius: 0.25rem;
+        }
+
+        progress::-webkit-progress-value {
+            background-color: #34d399;
+            border-radius: 0.25rem;
+        }
+
+        progress::-moz-progress-bar {
+            background-color: #34d399;
+            border-radius: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <main class="flex min-h-screen flex-col items-center justify-center p-24 relative overflow-hidden">
+        <canvas id="matrixCanvas"></canvas>
+        <div class="fixed top-0 left-0 right-0 bg-gray-800 text-green-400 p-4 flex items-center justify-between">
+            <img src="https://www.openu.ac.il/_layouts/15/OpenU_WWW/Theming/Global/images/LOGO_OU_WHITE.svg?v=6" alt="Open University Logo" height="50" width="150">
+            <h1 class="text-2xl font-bold cyber-font" dir="rtl">
+                קורס 10878: ניתוח נתוני עתק ואבטחת סייבר
+            </h1>
+        </div>
+        <div class="z-10 w-full max-w-4xl text-center">
+            <div id="animatedText" class="text-6xl font-bold mb-8 text-center cyber-font text-green-400 cursor-pointer"></div>
+        </div>
+        <div class="fixed bottom-0 left-0 right-0 bg-gray-800 text-green-400 p-2 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-red-400">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+            <span class="text-red-400">The content provided is for education and informational purpose only</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                <path d="M7 7h10"></path>
+                <path d="M7 12h10"></path>
+                <path d="M7 17h10"></path>
+                <path d="M3 5v14"></path>
+                <path d="M21 5v14"></path>
+            </svg>
+            <span>This site is powered by 10878 Ops</span>
+        </div>
+    </main>
+
+    <script>
+        // Matrix background
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = String.fromCharCode(Math.random() * 128);
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 33);
+
+        // Animated Text
+        const lettersAndSymbols = [
+            "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
+            "!", "@", "#", "$", "%", "^", "&", "*", "-", "_", "+", "=", ";", ":", "<", ">", ","
+        ];
+
+        class TextAnimator {
+            constructor(textElement) {
+                this.textElement = textElement;
+                this.originalChars = [];
+                this.chars = [];
+                this.splitText();
+            }
+
+            splitText() {
+                this.chars = Array.from(this.textElement.children);
+                this.originalChars = this.chars.map(char => char.innerHTML);
+            }
+
+            animate() {
+                this.reset();
+
+                this.chars.forEach((char, position) => {
+                    const initialHTML = char.innerHTML;
+
+                    gsap.fromTo(char,
+                        { opacity: 0 },
+                        {
+                            duration: 0.03,
+                            onComplete: () => gsap.set(char, { innerHTML: initialHTML, delay: 0.1 }),
+                            repeat: 2,
+                            repeatRefresh: true,
+                            repeatDelay: 0.05,
+                            delay: (position + 1) * 0.06,
+                            innerHTML: () => lettersAndSymbols[Math.floor(Math.random() * lettersAndSymbols.length)],
+                            opacity: 1
+                        }
+                    );
+                });
+
+                gsap.fromTo(this.textElement,
+                    { '--anim': 0 },
+                    {
+                        duration: 1,
+                        ease: "expo",
+                        '--anim': 1
+                    }
+                );
+            }
+
+            animateBack() {
+                gsap.killTweensOf(this.textElement);
+                gsap.to(this.textElement, {
+                    duration: 0.6,
+                    ease: "power4",
+                    '--anim': 0
+                });
+            }
+
+            reset() {
+                this.chars.forEach((char, index) => {
+                    gsap.killTweensOf(char);
+                    char.innerHTML = this.originalChars[index];
+                });
+
+                gsap.killTweensOf(this.textElement);
+                gsap.set(this.textElement, {'--anim': 0});
+            }
+        }
+
+        const animatedTextElement = document.getElementById('animatedText');
+        const text = "10878";
+        animatedTextElement.innerHTML = text.split('').map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+        const textAnimator = new TextAnimator(animatedTextElement);
+
+        animatedTextElement.addEventListener('mouseenter', () => textAnimator.animate());
+        animatedTextElement.addEventListener('mouseleave', () => textAnimator.animateBack());
+
+        // Initial animation
+        textAnimator.animate();
+    </script>
+</body>
+</html>
+
