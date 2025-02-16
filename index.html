@@ -86,7 +86,7 @@
         .mt-4 { margin-top: 1rem; }
         .w-full { width: 100%; }
         .max-w-4xl { max-width: 56rem; }
-        .text-6xl { font-size: 3.75rem; line-height: 1; }
+        .text-6xl { font-size: 8rem; line-height: 1.2; }
         .text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
         .text-2xl { font-size: 1.5rem; line-height: 2rem; }
         .font-bold { font-weight: 700; }
@@ -143,6 +143,12 @@
         progress::-moz-progress-bar {
             background-color: #34d399;
             border-radius: 0.25rem;
+        }
+
+        #animatedText {
+            color: #4ade80;
+            text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            letter-spacing: 0.05em;
         }
     </style>
 </head>
@@ -239,16 +245,19 @@
                     const initialHTML = char.innerHTML;
 
                     gsap.fromTo(char,
-                        { opacity: 0 },
+                        { opacity: 0, scale: 0.5, rotation: -180 },
                         {
-                            duration: 0.03,
-                            onComplete: () => gsap.set(char, { innerHTML: initialHTML, delay: 0.1 }),
-                            repeat: 2,
+                            duration: 0.1,
+                            onComplete: () => gsap.set(char, { innerHTML: initialHTML, delay: 0.2 }),
+                            repeat: 3,
                             repeatRefresh: true,
                             repeatDelay: 0.05,
-                            delay: (position + 1) * 0.06,
+                            delay: (position + 1) * 0.1,
                             innerHTML: () => lettersAndSymbols[Math.floor(Math.random() * lettersAndSymbols.length)],
-                            opacity: 1
+                            opacity: 1,
+                            scale: 1,
+                            rotation: 0,
+                            ease: "back.out(2)"
                         }
                     );
                 });
@@ -256,8 +265,8 @@
                 gsap.fromTo(this.textElement,
                     { '--anim': 0 },
                     {
-                        duration: 1,
-                        ease: "expo",
+                        duration: 2,
+                        ease: "expo.out",
                         '--anim': 1
                     }
                 );
@@ -281,6 +290,10 @@
                 gsap.killTweensOf(this.textElement);
                 gsap.set(this.textElement, {'--anim': 0});
             }
+            startRepeatingAnimation() {
+                this.animate();
+                setInterval(() => this.animate(), 10000); // Repeat every 10 seconds
+            }
         }
 
         const animatedTextElement = document.getElementById('animatedText');
@@ -289,11 +302,7 @@
 
         const textAnimator = new TextAnimator(animatedTextElement);
 
-        animatedTextElement.addEventListener('mouseenter', () => textAnimator.animate());
-        animatedTextElement.addEventListener('mouseleave', () => textAnimator.animateBack());
-
-        // Initial animation
-        textAnimator.animate();
+        textAnimator.startRepeatingAnimation();
     </script>
 </body>
 </html>
